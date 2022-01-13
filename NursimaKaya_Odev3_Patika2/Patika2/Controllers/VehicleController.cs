@@ -69,7 +69,13 @@ namespace Patika2.Controllers
             }
 
             var containerList = await unitOfWork.Vehicle.GetContainers(id);
-            return Ok(containerList);
+            var entityList = new List<ContainerEntity>();
+            foreach(var container in containerList)
+            {
+                var entity = mapper.Map<Container, ContainerEntity>(container);
+                entityList.Add(entity);
+            }
+            return Ok(entityList);
         }
 
 
@@ -86,17 +92,18 @@ namespace Patika2.Controllers
             var containerList = await unitOfWork.Vehicle.GetContainers(id);
 
             // split into n batches
-            var batches = new List<List<Container>>();
-            var temp = new List<Container>();
+            var batches = new List<List<ContainerEntity>>();
+            var temp = new List<ContainerEntity>();
             var count = 0;
             foreach(Container c in containerList)
             {
-                temp.Add(c);
+                var containerEntity = mapper.Map<Container, ContainerEntity>(c);
+                temp.Add(containerEntity);
                 count++;
                 if(count == n || c == containerList.Last<Container>())
                 {
                     batches.Add(temp);
-                    temp = new List<Container>();
+                    temp = new List<ContainerEntity>();
                     count = 0;
                 }
             }

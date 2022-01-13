@@ -1,5 +1,7 @@
-﻿using Data;
+﻿using AutoMapper;
+using Data;
 using Data.Uow;
+using Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,10 +19,12 @@ namespace Patika2.Controllers
 
         private readonly ILogger<OptimizationController> _logger;
 
-        public OptimizationController(ILogger<OptimizationController> logger, IUnitOfWork unitOfWork)
+        private readonly IMapper mapper;
+        public OptimizationController(ILogger<OptimizationController> logger, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _logger = logger;
             this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
         }
 
         [HttpGet("{id}/{n}")]
@@ -61,8 +65,20 @@ namespace Patika2.Controllers
              */
             List<List<Container>> clusters = GetClustersFromAssignment(containerList, assignment, n);
 
+            List<List<ContainerEntity>> entityClusters = new List<List<ContainerEntity>>();
 
-            return Ok(clusters);
+            foreach (var cluster in clusters)
+            {
+                var sublist = new List<ContainerEntity>();
+                foreach(var container in cluster)
+                {
+                    var entity = mapper.Map<Container, ContainerEntity>(container);
+                    sublist.Add(entity);
+                }
+                entityClusters.Add(sublist);
+            }
+
+            return Ok(entityClusters);
         }
 
         private List<Point> GetPointsFromContainers(IEnumerable<Container> containers)
