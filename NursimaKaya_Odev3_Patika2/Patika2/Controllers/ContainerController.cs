@@ -1,5 +1,7 @@
-﻿using Data;
+﻿using AutoMapper;
+using Data;
 using Data.Uow;
+using Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,10 +19,13 @@ namespace Patika2.Controllers
 
         private readonly ILogger<ContainerController> _logger;
 
-        public ContainerController(ILogger<ContainerController> logger, IUnitOfWork unitOfWork)
+        private readonly IMapper mapper;
+
+        public ContainerController(ILogger<ContainerController> logger, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _logger = logger;
             this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
         }
 
 
@@ -28,7 +33,15 @@ namespace Patika2.Controllers
         public async Task<IActionResult> GetAll()
         {
             var containerList = await unitOfWork.Container.GetAll();
-            return Ok(containerList);
+
+            var entityList = new List<ContainerEntity>();
+
+            foreach (var container in containerList)
+            {
+                var entity = mapper.Map<Container, ContainerEntity>(container);
+                entityList.Add(entity);
+            }
+            return Ok(entityList);
         }
 
 
@@ -42,23 +55,27 @@ namespace Patika2.Controllers
                 return NotFound();
             }
 
-            return Ok(container);
+            var entity = mapper.Map<Container, ContainerEntity>(container);
+
+            return Ok(entity);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Container entity)
+        public async Task<IActionResult> Create([FromBody] ContainerEntity entity)
         {
-            var response = await unitOfWork.Container.Add(entity);
+            var model = mapper.Map<ContainerEntity, Container>(entity);
+            var response = await unitOfWork.Container.Add(model);
             unitOfWork.Complete();
 
             return Ok();
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Container entity)
+        public async Task<IActionResult> Update([FromBody] ContainerEntity entity)
         {
-            var response = await unitOfWork.Container.Update(entity);
+            var model = mapper.Map<ContainerEntity, Container>(entity);
+            var response = await unitOfWork.Container.Update(model);
             unitOfWork.Complete();
             if(response == false)
             {

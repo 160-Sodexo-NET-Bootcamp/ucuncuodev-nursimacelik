@@ -15,6 +15,9 @@ namespace Core
         {
             CreateMap<Vehicle, VehicleEntity>();
             CreateMap<VehicleEntity, Vehicle>();
+
+            CreateMap<Container, ContainerEntity>();
+            CreateMap<ContainerEntity, Container>();
         }
     }
 }
