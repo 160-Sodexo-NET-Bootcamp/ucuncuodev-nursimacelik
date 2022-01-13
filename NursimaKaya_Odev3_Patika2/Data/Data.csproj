@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="BookRepo\**" />
+	  <EmbeddedResource Remove="BookRepo\**" />
+	  <None Remove="BookRepo\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="DataModel\Book.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.0.123" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.6">	  </PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+		<PackageReference Include="System.Linq" Version="4.3.0" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.10" />
+	</ItemGroup>
+
+</Project>
