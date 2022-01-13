@@ -33,6 +33,12 @@ namespace Patika2.Controllers
         public async Task<IActionResult> GetAll()
         {
             var vehicleList = await unitOfWork.Vehicle.GetAll();
+            var entityList = new List<VehicleEntity>();
+            foreach(var vehicle in vehicleList)
+            {
+                var entity = mapper.Map<Vehicle, VehicleEntity>(vehicle);
+                entityList.Add(entity);
+            }
             return Ok(vehicleList);
         }
 
