@@ -39,12 +39,12 @@ namespace Patika2.Controllers
                 var entity = mapper.Map<Vehicle, VehicleEntity>(vehicle);
                 entityList.Add(entity);
             }
-            return Ok(vehicleList);
+            return Ok(entityList);
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(long id)
+        [HttpGet("GetById/{id}")]
+        public async Task<IActionResult> GetById([FromRoute] long id)
         {
             var vehicle = await unitOfWork.Vehicle.GetById(id);
 
@@ -122,10 +122,17 @@ namespace Patika2.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] VehicleEntity entity)
+        public async Task<IActionResult> Update([FromBody] VehicleEntity entity, [FromQuery] long id)
         {
+            var vehicle = await unitOfWork.Vehicle.GetById(id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
             var model = mapper.Map<VehicleEntity, Vehicle>(entity);
-            var response = unitOfWork.Vehicle.Update(model);
+            model.Id = id;
+            await unitOfWork.Vehicle.Update(model);
             unitOfWork.Complete();
 
             return Ok();

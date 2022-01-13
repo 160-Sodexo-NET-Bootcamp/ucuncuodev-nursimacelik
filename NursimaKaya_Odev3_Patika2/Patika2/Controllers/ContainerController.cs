@@ -72,11 +72,19 @@ namespace Patika2.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] ContainerEntity entity)
+        public async Task<IActionResult> Update([FromBody] ContainerEntity entity, [FromQuery] long id)
         {
+            var container = await unitOfWork.Container.GetById(id);
+            if(container == null)
+            {
+                return NotFound();
+            }
+
             var model = mapper.Map<ContainerEntity, Container>(entity);
+            model.Id = id;
             var response = await unitOfWork.Container.Update(model);
             unitOfWork.Complete();
+
             if(response == false)
             {
                 return BadRequest();

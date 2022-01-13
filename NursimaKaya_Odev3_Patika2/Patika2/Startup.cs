@@ -1,5 +1,6 @@
 using AutoMapper;
 using Core;
+using Core.MiddleWare;
 using Data.Context;
 using Data.Uow;
 using Microsoft.AspNetCore.Builder;
@@ -66,7 +67,7 @@ namespace Patika2
             }
 
 
-
+            app.UseMiddleware<BlockGetByIdMiddleware>();
 
             app.UseHttpsRedirection();
 
